@@ -1,5 +1,4 @@
 import pytest
-
 from pages.LoginPage import LoginPage
 
 def pytest_addoption(parser):
@@ -14,7 +13,7 @@ def open_browser(request):
     login_p.close()
 
 @pytest.fixture
-def login_saucedemo(open_browser):
+def login_orange(open_browser):
     login_p = open_browser
     login_p.efetuar_login()
-
+    yield login_p
