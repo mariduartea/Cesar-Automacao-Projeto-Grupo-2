@@ -1,8 +1,5 @@
-import time
-
-from selenium.webdriver.common.by import By
-
 from pages.Base import Base
+from selenium.webdriver.common.by import By
 
 class LoginPage(Base):
 
@@ -18,10 +15,9 @@ class LoginPage(Base):
         self.driver.get(self.url_login)
 
     def click_login_button(self):
-        self.driver.find_element(*self.login_btn)
+        self.driver.find_element(*self.login_btn).click()
 
     def efetuar_login(self, username='Admin', password='admin123'):
-        time.sleep(5)
-        self.driver.find_element(*self.username_field).send_keys(username)
+        self.wait_element(self.username_field).send_keys(username)
         self.driver.find_element(*self.password_field).send_keys(password)
         self.click_login_button()
