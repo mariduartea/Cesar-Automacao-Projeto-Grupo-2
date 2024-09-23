@@ -7,6 +7,7 @@ class LoginPage(Base):
     username_field = (By.CSS_SELECTOR, '[name="username"]')
     password_field = (By.CSS_SELECTOR, '[name="password"]')
     login_btn = (By.TAG_NAME, 'button')
+    alert = (By.CSS_SELECTOR, '[class="oxd-toast-icon-container"]')
 
     def __init__(self, browser):
         super(LoginPage, self).__init__(driver=None, browser=browser)
@@ -21,3 +22,6 @@ class LoginPage(Base):
         self.wait_element(self.username_field).send_keys(username)
         self.driver.find_element(*self.password_field).send_keys(password)
         self.click_login_button()
+
+    def alerts(self):
+        return self.wait_element(self.alert).is_displayed()

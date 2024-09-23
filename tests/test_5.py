@@ -1,13 +1,12 @@
-from pages.BuzzPage import BuzzPage
-from pages.MenuPage import MenuPage
+import time
 
 class Test5:
 
-    def test_to_share_post_buzz(self, login_orange):
-        login_p = login_orange
-        menu = MenuPage(driver=login_p.driver)
-        assert menu.has_menu_icon(), "Elemento não encontrado"
-        menu.click_buzz()
+    def test_like_post_buzz(self, new_post_buzz):
 
-        buzz = BuzzPage(driver=login_p.driver)
-        assert buzz.is_url_buzz(), "URL inválida"
+        login_p, menu_p, buzz_p = new_post_buzz
+        buzz_p.like_post()
+        assert login_p.alerts(), "Alert não encontrado"
+        time.sleep(2)
+        assert buzz_p.has_like_interactions(), "O like não aconteceu"
+        assert buzz_p.has_interactions() == '1 Like', "Sem curtidas na postagem"
