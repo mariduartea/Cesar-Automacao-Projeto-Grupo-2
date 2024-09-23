@@ -1,13 +1,12 @@
-from pages.BuzzPage import BuzzPage
-from pages.MenuPage import MenuPage
+import time
 
 class Test4:
 
-    def test_like_post_buzz(self, login_orange):
-        login_p = login_orange
-        menu = MenuPage(driver=login_p.driver)
-        assert menu.has_menu_icon(), "Elemento não encontrado"
-        menu.click_buzz()
+    def test_comment_post_buzz(self, new_post_buzz):
 
-        buzz = BuzzPage(driver=login_p.driver)
-        assert buzz.is_url_buzz(), "URL inválida"
+        comment_text = "Teste Comentario. Time 2"
+        login_p, menu_p, buzz_p = new_post_buzz
+        buzz_p.comment_post(comment_text)
+        assert login_p.alerts(), "Alert não encontrado"
+        time.sleep(2)
+        assert buzz_p.has_interactions() == '1 Comment', "Sem comentarios na postagem"
