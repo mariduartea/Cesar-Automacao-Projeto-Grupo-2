@@ -1,4 +1,6 @@
+import time
 from pages.Base import Base
+from interaction_type import InteractionType
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
@@ -19,7 +21,7 @@ class BuzzPage(Base):
     like_icon = (By.CSS_SELECTOR, '[class="orangehrm-buzz-post-actions"] [class="orangehrm-heart-icon"]')
     like_interactions_active = (By.CSS_SELECTOR, '[class="orangehrm-buzz-post-actions"] [class="orangehrm-like-animation"]')
     share_icon = (By.CSS_SELECTOR, '[class="oxd-icon bi-share-fill"]')
-    interaction_active = (By.CSS_SELECTOR, '[class="oxd-text oxd-text--p orangehrm-buzz-stats-active"]')
+    interaction_active = (By.CSS_SELECTOR, '.orangehrm-buzz-stats .oxd-text--p')
 
     def __init__(self, driver):
         super(BuzzPage, self).__init__(driver=driver)
@@ -60,23 +62,54 @@ class BuzzPage(Base):
         modal_share.find_element(*self.btn_post).click()
 
     def get_post(self, position = 0):
-        post = self.driver.find_elements(*self.has_post)
-        return post[position]
+        counter = 0
+        while counter < 10:
+            posts = self.driver.find_elements(*self.has_post)
+            if len(posts) > 0:
+                return posts[position]
+            time.sleep(1)
+            counter += 1
+        return None
 
-    def has_description_post(self):
-        return self.wait_element(self.has_text_post).text
+    def has_description_post(self, text_post):
+        counter = 0
+        while counter < 10:
+            if self.wait_element(self.has_text_post).text == text_post:
+                return True
+            time.sleep(1)
+            counter += 1
+        return False
 
     def has_like_interactions(self):
-        return self.get_post().find_element(*self.like_interactions_active).is_displayed()
-
-    def has_interactions(self):
-        return self.get_post().find_element(*self.interaction_active).text
-
-    def has_share(self):
-        element = self.get_post(1).find_elements(*self.interaction_active)
-        element_position = element[1]
-        return element_position.text
-
-    def get_post_by_text(self, text):
         post = self.get_post()
-        return post.find_elements(By.XPATH, f"//p[text()='{text}']")
+        counter = 0
+        while counter < 10:
+            like_active = post.find_elements(*self.like_interactions_active)
+            if len(like_active):
+                return like_active[0].is_displayed()
+            time.sleep(1)
+            counter += 1
+        return False
+
+    def has_interactions(self, type: InteractionType, text, post_number: int = 0):
+        time.sleep(1)
+        post = self.get_post(post_number)
+        elements = post.find_elements(*self.interaction_active)
+        interaction = elements[type.value]
+        counter = 0
+        while counter < 10:
+            if interaction.text == text:
+                return True
+            time.sleep(1)
+            counter += 1
+        return False
+
+    def get_posts_by_text(self, text):
+        counter = 0
+        while counter < 5:
+            time.sleep(1)
+            posts = self.driver.find_elements(By.XPATH, f"//p[text()='{text}']")
+            if len(posts) > 0:
+                return posts
+            counter += 1
+        return []
