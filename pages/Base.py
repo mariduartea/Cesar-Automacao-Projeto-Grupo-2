@@ -18,7 +18,7 @@ class Base:
     def is_url(self, url):
         return self.driver.current_url == url
 
-    def wait_element(self, elemente_tuple, timeout=5):
+    def wait_element(self, elemente_tuple, timeout=10):
         return  WebDriverWait(self.driver, timeout).until(
             expected_conditions.visibility_of_element_located(elemente_tuple))
 
